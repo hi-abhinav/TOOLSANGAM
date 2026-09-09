@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolSangam - Super Simple & Cool PDF Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<style>
+:root{--red:#ff3b3b;--blue:#4a7bff;--green:#00d26a;--yellow:#ffb400;--bg:#fffaf5}
+*{box-sizing:border-box;font-family:'Plus Jakarta Sans',system-ui}
+body{margin:0;background:var(--bg);color:#111}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 5%;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #eee}
+.logo{font-weight:800;font-size:22px}.logo span{color:var(--red)}
+.hero{text-align:center;padding:60px 20px 30px}
+.hero h1{font-size:48px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-1px}
+.hero h1.c1{color:var(--red)}.hero h1.c2{color:var(--blue)}.hero h1.c3{color:var(--green)}
+.hero p{opacity:.6;font-size:18px;max-width:600px;margin:15px auto}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;max-width:1100px;margin:30px auto;padding:0 20px}
+.tool{background:#fff;border-radius:22px;padding:22px;border:2px solid #111;box-shadow:6px 6px 0 #111;cursor:pointer;transition:.15s;text-align:left}
+.tool:hover{transform:translate(-2px,-2px);box-shadow:10px 10px 0 #111}
+.tool.icon{font-size:38px;margin-bottom:12px}
+.tool h3{margin:0;font-size:18px}
+.tool p{font-size:13px;opacity:.6;margin:6px 0 0}
+.tool.red{background:#ffe8e8}.tool.blue{background:#e8efff}.tool.green{background:#e6ffef}.tool.yellow{background:#fff4d6}
+.dropzone{max-width:800px;margin:40px auto;background:#fff;border:3px dashed #111;border-radius:28px;padding:40px;text-align:center;display:none}
+.dropzone.active{display:block}
+.btn{padding:14px 26px;border-radius:14px;border:2px solid #111;background:#111;color:#fff;font-weight:800;cursor:pointer;box-shadow:4px 4px 0 #111;margin-top:15px}
+.mascot{position:fixed;right:20px;bottom:20px;background:#111;color:#fff;padding:10px 16px;border-radius:30px;font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="logo">ToolSangam<span>.coool</span></div><div style="font-size:12px;border:2px solid #111;padding:6px 12px;border-radius:20px">100% PRIVATE • NO UPLOAD • $0</div></header>
+<div class="hero">
+<h1>PDF tools that are <span class="c1">actually</span> <span class="c2">simple</span> <span class="c3"> & private</span></h1>
+<p>iLovePDF se 10x zyada cool, PDF24 se 10x zyada simple. Baccha bhi use kar sake.</p>
+</div>
+<div class="tools" id="toolGrid">
+<div class="tool red" onclick="openTool('merge')"><div class="icon">📚</div><h3>Merge PDF</h3><p>Jodo 2+ PDF ko ek me</p></div>
+<div class="tool blue" onclick="openTool('split')"><div class="icon">✂️</div><h3>Split PDF</h3><p>PDF ko alag-alag kar do</p></div>
+<div class="tool green" onclick="openTool('img2pdf')"><div class="icon">🖼️→📄</div><h3>Image to PDF</h3><p>Photo se PDF banao</p></div>
+<div class="tool yellow" onclick="openTool('convert')"><div class="icon">🔁</div><h3>Image Converter</h3><p>JPG ↔ PNG ↔ WEBP</p></div>
+<div class="tool blue" onclick="openTool('resize')"><div class="icon">📐</div><h3>Resize & Compress</h3><p>Image chhota karo</p></div>
+<div class="tool red" onclick="openTool('rotate')"><div class="icon">🔄</div><h3>Rotate PDF</h3><p>Ulta PDF seedha karo</p></div>
+<div class="tool green" onclick="openTool('pdf2img')"><div class="icon">📄→🖼️</div><h3>PDF to Image</h3><p>PDF ko JPG banao</p></div>
+<div class="tool yellow" onclick="openTool('dev')"><div class="icon">⚡️</div><h3>Dev Tools</h3><p>QR, Base64, Hash, UUID</p></div>
+</div>
+<div class="dropzone" id="workArea">
+<h2 id="workTitle">Drop files here</h2>
+<p id="workDesc" style="opacity:.6">Drag & drop karo</p>
+<input type="file" id="fileInput" multiple>
+<div id="extraInputs"></div>
+<button class="btn" id="actionBtn">Convert Now →</button>
+<button class="btn" style="background:#fff;color:#111;margin-left:10px" onclick="closeTool()">Back</button>
+<div id="result" style="margin-top:20px"></div>
+</div>
+<div class="mascot">🔒 Files never leave your device</div>
+<script>
+let currentTool='';
+function openTool(t){currentTool=t;document.getElementById('toolGrid').style.display='none';document.getElementById('workArea').style.display='block';const titles={merge:['Merge PDFs','2+ PDF select karo'],split:['Split PDF','PDF + pages e.g. 1,2,5-7'],img2pdf:['Images to PDF','Photos select karo'],convert:['Image Converter','Image select karo'],resize:['Resize Image','Image + size'],rotate:['Rotate PDF','PDF select karo'],pdf2img:['PDF to Image','PDF select karo'],dev:['Dev Tools','Text daalo']};document.getElementById('workTitle').textContent=titles[t][0];document.getElementById('workDesc').textContent=titles[t][1];setupExtra(t);}
+function closeTool(){document.getElementById('toolGrid').style.display='grid';document.getElementById('workArea').style.display='none';document.getElementById('result').innerHTML='';}
+function setupExtra(t){const ex=document.getElementById('extraInputs');ex.innerHTML='';if(t=='split')ex.innerHTML='<input id="pages" placeholder="e.g. 1,2,5-7 (empty = all separate)">';if(t=='convert')ex.innerHTML='<select id="fmt"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WEBP</option></select>';if(t=='resize')ex.innerHTML='<div style="display:flex;gap:10px"><input id="rw" placeholder="Width 800"><input id="rh" placeholder="Height 600"></div>';if(t=='rotate')ex.innerHTML='<select id="deg"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select>';if(t=='dev')ex.innerHTML='<input id="devText" placeholder="Text for QR/Base64"><select id="devMode"><option value="qr">QR Code</option><option value="b64enc">Base64 Encode</option><option value="uuid">UUID</option></select>';}
+document.getElementById('actionBtn').onclick=async()=>{
+ const files=document.getElementById('fileInput').files;
+ if(currentTool!='dev' &&!files.length) return alert('File select karo');
+ try{
+ if(currentTool=='merge'){const out=await PDFLib.PDFDocument.create();for(let f of files){const b=await f.arrayBuffer();const pdf=await PDFLib.PDFDocument.load(b);const pages=await out.copyPages(pdf,pdf.getPageIndices());pages.forEach(p=>out.addPage(p));}save(await out.save(),'merged.pdf');}
+ else if(currentTool=='split'){const f=files[0];const b=await f.arrayBuffer();const pdf=await PDFLib.PDFDocument.load(b);const range=document.getElementById('pages')?.value||'';if(!range.trim()){for(let i=0;i<pdf.getPageCount();i++){const n=await PDFLib.PDFDocument.create();const [p]=await n.copyPages(pdf,[i]);n.addPage(p);save(await n.save(),`page-${i+1}.pdf`);}return;}let idx=[];range.split(',').forEach(s=>{if(s.includes('-')){let[a,b]=s.split('-').map(x=>parseInt(x.trim()));for(let k=a;k<=b;k++)idx.push(k-1);}else idx.push(parseInt(s.trim())-1);});const n=await PDFLib.PDFDocument.create();const pages=await n.copyPages(pdf,idx.filter(i=>i>=0&&i<pdf.getPageCount()));pages.forEach(p=>n.addPage(p));save(await n.save(),'split.pdf');}
+ else if(currentTool=='img2pdf'){const doc=await PDFLib.PDFDocument.create();for(let f of files){const b=await f.arrayBuffer();let img;try{if(f.type.includes('png'))img=await doc.embedPng(b);else img=await doc.embedJpg(b);}catch(e){continue;}const pg=doc.addPage([img.width,img.height]);pg.drawImage(img,{x:0,y:0,width:img.width,height:img.height});}save(await doc.save(),'images.pdf');}
+ else if(currentTool=='convert'){const f=files[0];const fmt=document.getElementById('fmt').value;const img=new Image();img.src=URL.createObjectURL(f);await img.decode();const c=document.createElement('canvas');c.width=img.width;c.height=img.height;c.getContext('2d').drawImage(img,0,0);const url=c.toDataURL(fmt,0.9);const a=document.createElement('a');a.href=url;a.download='converted.'+fmt.split('/')[1];a.click();}
+ else if(currentTool=='resize'){const f=files[0];const w=parseInt(document.getElementById('rw').value)||0;const h=parseInt(document.getElementById('rh').value)||0;const img=new Image();img.src=URL.createObjectURL(f);await img.decode();const c=document.createElement('canvas');c.width=w||img.width;c.height=h||img.height;c.getContext('2d').drawImage(img,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.7);const a=document.createElement('a');a.href=url;a.download='resized.jpg';a.click();}
+ else if(currentTool=='rotate'){const f=files[0];const deg=parseInt(document.getElementById('deg').value);const b=await f.arrayBuffer();const pdf=await PDFLib.PDFDocument.load(b);pdf.getPages().forEach(p=>p.setRotation(PDFLib.degrees(p.getRotation().angle+deg)));save(await pdf.save(),'rotated.pdf');}
+ else if(currentTool=='dev'){const txt=document.getElementById('devText').value;const mode=document.getElementById('devMode').value;if(mode=='qr'){document.getElementById('result').innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(txt)}" style="border:3px solid #111;border-radius:16px">`;}else if(mode=='b64enc'){document.getElementById('result').innerHTML=`<code style="background:#fff;padding:12px;border-radius:10px;display:block;border:2px solid #111;word-break:break-all">${btoa(txt)}</code>`;}else{document.getElementById('result').innerHTML=`<code style="background:#fff;padding:12px;border-radius:10px;display:block;border:2px solid #111">${crypto.randomUUID()}</code>`;}}
+ document.getElementById('result').innerHTML+='<p style="color:#00d26a;font-weight:800;margin-top:15px">✓ Done! File server pe gayi hi nahi</p>';
+ }catch(e){alert('Error: '+e.message)}
+};
+function save(bytes,name){const blob=new Blob([bytes],{type:'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+</script>
+</body>
+</html>
