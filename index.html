@@ -75,5 +75,65 @@ document.getElementById('actionBtn').onclick=async()=>{
 };
 function save(bytes,name){const blob=new Blob([bytes],{type:'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 </script>
+ <!-- TOOLSANGAM FOOTER START -->
+<style>
+  .ts-footer{background:#0a1931;color:#fff;padding:60px 20px 30px;font-family:Inter,sans-serif}
+  .ts-footer-container{max-width:1100px;margin:0 auto}
+  .ts-mission{font-size:22px;color:#a0aec0;text-align:center;max-width:600px;margin:0 auto 50px;line-height:1.5}
+  .ts-mission a{color:#fff;text-decoration:underline;font-weight:600}
+  .ts-footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  @media(min-width:768px){.ts-footer-grid{grid-template-columns:1fr 1fr 1fr}}
+  .ts-footer-col h4{color:#a0aec0;font-size:16px;margin-bottom:15px;letter-spacing:1px}
+  .ts-footer-col a{display:block;color:#fff;text-decoration:none;margin-bottom:12px;font-size:15px;opacity:.9}
+  .ts-footer-col a:hover{opacity:1;text-decoration:underline}
+  .ts-footer-bottom{border-top:1px solid #1a2a4a;margin-top:40px;padding-top:20px;text-align:center;color:#718096;font-size:13px}
+</style>
+
+<footer class="ts-footer">
+  <div class="ts-footer-container">
+    
+    <div class="ts-mission">
+      Our mission is to provide 100% free, fast & useful online tools for anyone, anywhere.<br><br>
+      ToolSangam is a free tool platform. <a href="/donate.html">Donate</a> or <a href="/contact.html">request a tool</a> today!
+    </div>
+
+    <div class="ts-footer-grid">
+      <!-- Column 1 -->
+      <div class="ts-footer-col">
+        <h4>ABOUT</h4>
+        <a href="/about.html">About Us</a>
+        <a href="/contact.html">Contact Us</a>
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Use</a>
+        <a href="/disclaimer.html">Disclaimer</a>
+      </div>
+      
+      <!-- Column 2 -->
+      <div class="ts-footer-col">
+        <h4>POPULAR TOOLS</h4>
+        <a href="/qr-generator.html">QR Generator</a>
+        <a href="/word-counter.html">Word Counter</a>
+        <a href="/age-calculator.html">Age Calculator</a>
+        <a href="/password-generator.html">Password Generator</a>
+        <a href="/image-compressor.html">Image Compressor</a>
+      </div>
+
+      <!-- Column 3 -->
+      <div class="ts-footer-col">
+        <h4>SUPPORT</h4>
+        <a href="/feedback.html">Feedback</a>
+        <a href="/request-tool.html">Request a Tool</a>
+        <a href="/report-bug.html">Report a Bug</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+
+    <div class="ts-footer-bottom">
+      © 2025 ToolSangam.online - Made with ❤️ in India | Baswa, Rajasthan
+    </div>
+
+  </div>
+</footer>
+<!-- TOOLSANGAM FOOTER END -->
 </body>
 </html>
