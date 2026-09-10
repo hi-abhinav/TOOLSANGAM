@@ -90,6 +90,91 @@ function save(bytes,name){const blob=new Blob([bytes],{type:'application/pdf'});
 </style>
 
 <footer class="ts-footer">
+ <!-- BEST POPULAR TOOLS FOOTER - ToolSangam -->
+<style>
+  .tools-footer {
+    background: #0f172a;
+    color: white;
+    padding: 60px 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  .footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+  }
+  .popular-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateX(0);
+  }
+  .popular-list a:hover {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    transform: translateX(12px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    border-color: transparent;
+  }
+  .popular-list a::before {
+    content: '→';
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .popular-list a:hover::before {
+    opacity: 1;
+  }
+  .footer-title {
+    font-size: 13px;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    margin-bottom: 18px;
+    font-weight: 700;
+  }
+  @media(max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="tools-footer">
+  <div class="footer-grid">
+    <div>
+      <h2 style="font-size:28px; line-height:1.2; margin-bottom:15px;">Our mission is to provide 100% free, fast & useful online tools for anyone, anywhere.</h2>
+      <p style="color:#94a3b8;">ToolSangam is a free tool platform. <a href="/donate" style="color:white; text-decoration:underline;">Donate</a> or <a href="/request" style="color:white; text-decoration:underline;">request a tool</a> today!</p>
+    </div>
+
+    <div>
+      <div class="footer-title">POPULAR TOOLS</div>
+      <div class="popular-list">
+        <a href="/qr-generator">QR Generator</a>
+        <a href="/word-counter">Word Counter</a>
+        <a href="/age-calculator">Age Calculator</a>
+        <a href="/password-generator">Password Generator</a>
+        <a href="/image-compressor">Image Compressor</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-title">SUPPORT</div>
+      <div class="popular-list">
+        <a href="/feedback">Feedback</a>
+        <a href="/request">Request a Tool</a>
+        <a href="/report">Report a Bug</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</div>
   <div class="ts-footer-container">
     
     <div class="ts-mission">
