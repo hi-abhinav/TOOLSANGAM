@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!-- FAVICON + NEW LOGO -->
+<link rel="icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#2563EB">
 <title>ToolSangam - Super Simple & Cool PDF Tools</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -210,5 +215,21 @@ function save(bytes,name){const blob=new Blob([bytes],{type:'application/pdf'});
   </div>
 </footer>
 <!-- TOOLSANGAM FOOTER END -->
+ <!-- POPULAR TOOLS FOOTER WITH ANIMATION -->
+<style>
+  .tools-footer{background:#0f172a;color:#fff;padding:60px 20px}
+  .footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px}
+  .popular-list a{display:block;padding:10px 14px;margin:8px 0;background:rgba(255,255,255,.05);border-radius:12px;color:#cbd5e1;text-decoration:none;transition:.4s}
+  .popular-list a:hover{background:linear-gradient(135deg,#2563EB,#7c3aed);color:#fff;transform:translateX(10px);box-shadow:0 10px 20px rgba(37,99,235,.4)}
+  .footer-title{font-size:12px;letter-spacing:2px;opacity:.5;margin-bottom:15px;font-weight:700}
+  @media(max-width:768px){.footer-grid{grid-template-columns:1fr}}
+</style>
+<footer class="tools-footer">
+  <div class="footer-grid">
+    <div><h2 style="font-size:24px;font-weight:700">Our mission is to provide 100% free, fast & useful online tools.</h2></div>
+    <div><div class="footer-title">POPULAR TOOLS</div><div class="popular-list"><a href="/qr-generator">QR Generator</a><a href="/word-counter">Word Counter</a><a href="/age-calculator">Age Calculator</a><a href="/password-generator">Password Generator</a><a href="/image-compressor">Image Compressor</a></div></div>
+    <div><div class="footer-title">SUPPORT</div><div class="popular-list"><a href="/feedback">Feedback</a><a href="/request">Request a Tool</a><a href="/sitemap.xml">Sitemap</a></div></div>
+  </div>
+</footer>
 </body>
 </html>
