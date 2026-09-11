@@ -1,93 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IFSC Finder - Bank Se IFSC</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Bank IFSC Finder - ToolSangam</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen p-4 flex justify-center">
-<div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">
-<h1 class="text-2xl font-bold text-center">Find IFSC Code</h1>
-<p class="text-center text-gray-500 text-sm mb-6">Bank -> State -> District -> Branch se IFSC nikalo (100% Browser me)</p>
+<div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
+<h1 class="text-2xl font-bold text-center">Find ANY IFSC Code</h1>
+<p class="text-center text-xs text-gray-500 mb-4">1,50,000+ Codes - 100% Browser me, Server Cost 0</p>
 
-<label class="text-xs font-bold">BANK</label>
-<select id="bank" class="w-full border-2 rounded-xl p-3 mb-3"><option>Loading banks...</option></select>
-
-<label class="text-xs font-bold">STATE</label>
-<select id="state" disabled class="w-full border-2 rounded-xl p-3 mb-3 opacity-50"><option>First select Bank</option></select>
-
-<label class="text-xs font-bold">DISTRICT</label>
-<select id="district" disabled class="w-full border-2 rounded-xl p-3 mb-3 opacity-50"><option>First select State</option></select>
-
-<label class="text-xs font-bold">BRANCH</label>
-<select id="branch" disabled class="w-full border-2 rounded-xl p-3 mb-4 opacity-50"><option>First select District</option></select>
-
-<div id="result" class="hidden bg-black text-white rounded-xl p-5 text-center">
-<p class="text-gray-400 text-xs">Your IFSC Code is</p>
-<h2 id="ifscCode" class="text-3xl font-black tracking-widest my-2"></h2>
-<button onclick="navigator.clipboard.writeText(document.getElementById('ifscCode').innerText);alert('Copied')" class="mt-2 bg-white text-black px-4 py-1 rounded-full text-sm font-bold">Copy</button>
-<p id="fullAddr" class="text-xs text-gray-400 mt-3"></p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<input id="qBank" placeholder="Bank Name - ex: SBI" class="border-2 rounded-xl p-3">
+<input id="qState" placeholder="State - ex: Rajasthan" class="border-2 rounded-xl p-3">
+<input id="qDistrict" placeholder="District - ex: Kotputli" class="border-2 rounded-xl p-3">
+<input id="qBranch" placeholder="Branch - ex: Kotputli" class="border-2 rounded-xl p-3">
 </div>
-<div id="status" class="text-center text-sm text-gray-500 mt-3"></div>
+<button onclick="searchIFSC()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC</button>
+<p id="status" class="text-center text-xs text-gray-500 mt-2">Database loading...</p>
+
+<div id="results" class="mt-6 space-y-3"></div>
 </div>
 
 <script>
-const API = "https://bank-apis.justinclicks.com/API/V1/IFSC";
-const bankSel = document.getElementById('bank'), stateSel = document.getElementById('state'), distSel = document.getElementById('district'), branchSel = document.getElementById('branch');
-
-async function fetchJSON(url){
-  const r = await fetch(url);
-  if(!r.ok) throw new Error('API fail');
-  return await r.json();
+let ALL = [];
+// Load full Razorpay IFSC list (compressed) - ~4MB, once per user, cached by browser
+async function loadDB(){
+  try{
+    // This is Razorpay's official full list
+    const url = 'https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/dist/IFSC.json';
+    const res = await fetch(url);
+    const json = await res.json();
+    ALL = Object.entries(json).map(([ifsc, d])=>({ifsc, ...d}));
+    document.getElementById('status').innerText = `Loaded ${ALL.length} IFSC codes in your browser. Ab search karo.`;
+  }catch(e){
+    document.getElementById('status').innerText = 'DB load fail, refresh karo. (GitHub down hai)';
+  }
 }
+loadDB();
 
-async function loadBanks(){
-  try{
-    const data = await fetchJSON(`${API}/get/bank`);
-    bankSel.innerHTML = '<option value="">Select Bank</option>' + data.map(b=>`<option value="${b}">${b}</option>`).join('');
-  }catch(e){ document.getElementById('status').innerText='Bank list load nahi hui, refresh karo'; }
+function searchIFSC(){
+  const b = document.getElementById('qBank').value.toLowerCase();
+  const s = document.getElementById('qState').value.toLowerCase();
+  const d = document.getElementById('qDistrict').value.toLowerCase();
+  const br = document.getElementById('qBranch').value.toLowerCase();
+  
+  if(!b && !s && !d && !br){ alert('Kuch to likho'); return; }
+
+  const filtered = ALL.filter(x=>{
+    return (!b || x.BANK.toLowerCase().includes(b)) &&
+           (!s || x.STATE.toLowerCase().includes(s)) &&
+           (!d || x.DISTRICT.toLowerCase().includes(d)) &&
+           (!br || x.BRANCH.toLowerCase().includes(br))
+  }).slice(0, 50);
+
+  const div = document.getElementById('results');
+  if(!filtered.length){ div.innerHTML='<p class="text-center text-red-500">Koi IFSC nahi mila</p>'; return; }
+
+  div.innerHTML = filtered.map(x=>`
+    <div class="border-2 rounded-xl p-4 bg-gray-50">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold">${x.BANK} - ${x.BRANCH}</h3>
+        <span class="bg-black text-white px-3 py-1 rounded-full text-xs font-mono">${x.IFSC}</span>
+      </div>
+      <p class="text-xs text-gray-600 mt-1">${x.ADDRESS}, ${x.DISTRICT}, ${x.STATE} - ${x.CITY}</p>
+      <button onclick="navigator.clipboard.writeText('${x.IFSC}'); this.innerText='Copied!'" class="mt-2 text-xs bg-white border px-3 py-1 rounded-full">Copy IFSC</button>
+    </div>
+  `).join('');
+  document.getElementById('status').innerText = `${filtered.length} results found (from ${ALL.length} codes) - 0 server cost`;
 }
-loadBanks();
-
-bankSel.addEventListener('change', async ()=>{
-  if(!bankSel.value) return;
-  stateSel.disabled=false; stateSel.classList.remove('opacity-50');
-  stateSel.innerHTML='<option>Loading States...</option>';
-  distSel.innerHTML='<option>Select State First</option>'; branchSel.innerHTML='<option>Select District First</option>';
-  try{
-    const data = await fetchJSON(`${API}/get/state?bank=${encodeURIComponent(bankSel.value)}`);
-    stateSel.innerHTML = '<option value="">Select State</option>' + data.map(s=>`<option>${s}</option>`).join('');
-  }catch(e){ stateSel.innerHTML='<option>Error loading</option>'; }
-});
-
-stateSel.addEventListener('change', async ()=>{
-  distSel.disabled=false; distSel.classList.remove('opacity-50');
-  distSel.innerHTML='<option>Loading Districts...</option>';
-  try{
-    const data = await fetchJSON(`${API}/get/district?bank=${encodeURIComponent(bankSel.value)}&state=${encodeURIComponent(stateSel.value)}`);
-    distSel.innerHTML = '<option value="">Select District</option>' + data.map(d=>`<option>${d}</option>`).join('');
-  }catch(e){ distSel.innerHTML='<option>Error loading</option>'; }
-});
-
-distSel.addEventListener('change', async ()=>{
-  branchSel.disabled=false; branchSel.classList.remove('opacity-50');
-  branchSel.innerHTML='<option>Loading Branches...</option>';
-  try{
-    const data = await fetchJSON(`${API}/get/branch?bank=${encodeURIComponent(bankSel.value)}&state=${encodeURIComponent(stateSel.value)}&district=${encodeURIComponent(distSel.value)}`);
-    branchSel.innerHTML = '<option value="">Select Branch</option>' + data.map(b=>`<option value="${b.branch}">${b.branch} - ${b.IFSC}</option>`).join('');
-    branchSel._data = data;
-  }catch(e){ branchSel.innerHTML='<option>Error loading</option>'; }
-});
-
-branchSel.addEventListener('change', ()=>{
-  const selected = branchSel._data?.find(x=>x.branch===branchSel.value);
-  if(!selected) return;
-  document.getElementById('result').classList.remove('hidden');
-  document.getElementById('ifscCode').innerText = selected.IFSC;
-  document.getElementById('fullAddr').innerText = `${selected.bank}, ${selected.branch}, ${selected.district}, ${selected.state}`;
-  document.getElementById('status').innerText = 'Converted in your Chrome - 0 server cost';
-});
 </script>
 </body>
 </html>
+</body>
 </html>
