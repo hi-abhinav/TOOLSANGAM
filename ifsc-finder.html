@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFSC Finder - ToolSangam</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-xl rounded-2xl shadow-xl p-6">
+<h1 class="text-2xl font-bold text-center mb-2">IFSC Code Finder</h1>
+<p class="text-center text-gray-500 text-sm mb-6">100% Client-Side - No Server Cost</p>
+<div class="flex gap-2">
+<input id="ifscInput" placeholder="Ex: SBIN0001234" class="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 uppercase outline-none focus:border-black">
+<button onclick="findIFSC()" class="bg-black text-white px-6 rounded-xl font-bold">Find</button>
+</div>
+<div id="result" class="mt-6 hidden bg-gray-900 text-white rounded-xl p-5 text-sm leading-6"></div>
+</div>
+<script>
+async function findIFSC(){
+  const code = document.getElementById('ifscInput').value.trim().toUpperCase();
+  const resDiv = document.getElementById('result');
+  if(code.length!== 11){ alert('IFSC 11 character ka hota hai'); return; }
+  resDiv.classList.remove('hidden');
+  resDiv.innerHTML = 'Searching in user browser...';
+  try{
+    const r = await fetch(`https://ifsc.razorpay.com/${code}`);
+    if(!r.ok) throw new Error('Not Found');
+    const d = await r.json();
+    resDiv.innerHTML = `
+      <b>Bank:</b> ${d.BANK}<br>
+      <b>Branch:</b> ${d.BRANCH}<br>
+      <b>Address:</b> ${d.ADDRESS}<br>
+      <b>City:</b> ${d.CITY}, ${d.STATE}<br>
+      <b>MICR:</b> ${d.MICR || 'N/A'}<br>
+      <b>IFSC:</b> ${d.IFSC}
+    `;
+  }catch(e){
+    resDiv.innerHTML = '<span class="text-red-400">Invalid IFSC ya API fail. Sahi code dalo.</span>';
+  }
+}
+</script>
+</body>
+</html>
+</body>
+</html>
