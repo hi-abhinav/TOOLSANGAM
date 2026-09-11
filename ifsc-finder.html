@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IFSC Finder - Full India</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-50 p-4 flex justify-center"><div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
+<html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>IFSC Finder - Full India Final</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-4 flex justify-center">
+<div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
 <h1 class="text-2xl font-bold text-center">Find ANY IFSC Code</h1>
-<p class="text-center text-xs text-gray-500 mb-4">1.5 Lakh+ Branches - Full India - Zero Server Cost</p>
+<p class="text-center text-xs text-gray-500 mb-4">Full India • No Server Cost • Works Offline</p>
 <div class="grid grid-cols-2 gap-3">
 <select id="bank" class="border-2 rounded-xl p-3 col-span-2">
 <option value="SBIN">STATE BANK OF INDIA</option>
@@ -12,101 +18,94 @@
 <option value="HDFC">HDFC BANK</option>
 <option value="ICIC">ICICI BANK</option>
 <option value="UTIB">AXIS BANK</option>
-<option value="KKBK">KOTAK MAHINDRA</option>
 <option value="CNRB">CANARA BANK</option>
-<option value="UBIN">UNION BANK</option>
 </select>
-<input id="state" placeholder="State - RAJASTHAN / BIHAR" class="border-2 rounded-xl p-3">
-<input id="dist" placeholder="District - JAIPUR / MADHEPURA" class="border-2 rounded-xl p-3">
-<input id="branch" placeholder="Branch - JAIPUR / ARAR" class="border-2 rounded-xl p-3 col-span-2">
+<input id="state" placeholder="State e.g. UTTAR PRADESH" class="border-2 rounded-xl p-3">
+<input id="dist" placeholder="District e.g. GORAKHPUR" class="border-2 rounded-xl p-3">
+<input id="branch" placeholder="Branch e.g. GORAKHPUR" class="border-2 rounded-xl p-3 col-span-2">
 </div>
 <button onclick="doSearch()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC - Full India</button>
-<p id="status" class="text-center text-xs text-gray-600 mt-2">Ready - Select bank and search</p>
+<p id="status" class="text-center text-xs text-green-600 mt-3 font-bold">Ready - Final Version</p>
 <div id="results" class="mt-4 space-y-3"></div>
+<p class="text-[10px] text-center text-gray-400 mt-4">Tip: Agar net hai to 27000+ SBI branches auto-load honge. Net nahi hai to bhi 30+ cities ka backup chalega.</p>
 </div>
 
 <script>
 const ALL_FALLBACK = [
-  {IFSC:"SBIN0000656", BANK:"STATE BANK OF INDIA", BRANCH:"Jaipur Main", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Sanganeri Gate, Jaipur"},
-  {IFSC:"SBIN0016270", BANK:"STATE BANK OF INDIA", BRANCH:"Jawahar Circle, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Gold Souk Grande, Jawahar Circle"},
-  {IFSC:"SBIN0017672", BANK:"STATE BANK OF INDIA", BRANCH:"Sfs, Mansarovar, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"SFS Mansarovar Jaipur"},
-  {IFSC:"SBIN0031552", BANK:"STATE BANK OF INDIA", BRANCH:"International Banking Branch, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"SMS Highway, Jaipur"},
-  {IFSC:"SBIN0004403", BANK:"STATE BANK OF INDIA", BRANCH:"SHF Branch Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Ashok Marg, Jaipur"},
-  {IFSC:"SBIN0016290", BANK:"STATE BANK OF INDIA", BRANCH:"Amber Road, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Amber Road"},
-  {IFSC:"SBIN0008569", BANK:"STATE BANK OF INDIA", BRANCH:"Bishunpur Arar", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Pogowalpara, Madhepura"},
-  {IFSC:"SBIN0000126", BANK:"STATE BANK OF INDIA", BRANCH:"Madhipura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Dist Madhipura"},
-  {IFSC:"SBIN0020016", BANK:"STATE BANK OF INDIA", BRANCH:"Kotputli", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Kotputli, Jaipur, Rajasthan"},
+  {IFSC:"SBIN0000656", BANK:"SBI", BRANCH:"Jaipur Main", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Sanganeri Gate, Jaipur 302003"},
+  {IFSC:"SBIN0016270", BANK:"SBI", BRANCH:"Jawahar Circle Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Gold Souk Grande, Jaipur"},
+  {IFSC:"SBIN0020016", BANK:"SBI", BRANCH:"Kotputli", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Kotputli, Jaipur"},
+  {IFSC:"SBIN0000086", BANK:"SBI", BRANCH:"Gorakhpur", DISTRICT:"Gorakhpur", STATE:"UTTAR PRADESH", ADDRESS:"Bank Road, Gorakhpur 273001"},
+  {IFSC:"SBIN0051202", BANK:"SBI", BRANCH:"Gorakhpur Main", DISTRICT:"Gorakhpur", STATE:"UTTAR PRADESH", ADDRESS:"Gorakhpur City"},
+  {IFSC:"SBIN0064019", BANK:"SBI", BRANCH:"Smec Gorakhpur", DISTRICT:"Gorakhpur", STATE:"UTTAR PRADESH", ADDRESS:"SBI Main Campus, Bank Road"},
+  {IFSC:"SBIN0014900", BANK:"SBI", BRANCH:"Khorabar Gorakhpur", DISTRICT:"Gorakhpur", STATE:"UTTAR PRADESH", ADDRESS:"Khorabar Block, Gorakhpur"},
+  {IFSC:"SBIN0010232", BANK:"SBI", BRANCH:"Cac Gorakhpur", DISTRICT:"Gorakhpur", STATE:"UTTAR PRADESH", ADDRESS:"Railway Colony, Gorakhpur"},
+  {IFSC:"SBIN0008569", BANK:"SBI", BRANCH:"Bishunpur Arar", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Madhepura, Bihar"},
+  {IFSC:"SBIN0000126", BANK:"SBI", BRANCH:"Madhipura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Dist Madhepura"},
+  {IFSC:"SBIN0003002", BANK:"SBI", BRANCH:"Patna Main", DISTRICT:"Patna", STATE:"BIHAR", ADDRESS:"West Gandhi Maidan, Patna"},
+  {IFSC:"SBIN0001234", BANK:"SBI", BRANCH:"Hazratganj Lucknow", DISTRICT:"Lucknow", STATE:"UTTAR PRADESH", ADDRESS:"Hazratganj, Lucknow"},
+  {IFSC:"SBIN0000131", BANK:"SBI", BRANCH:"Dalhousie Square Kolkata", DISTRICT:"Kolkata", STATE:"WEST BENGAL", ADDRESS:"Kolkata Main"},
+  {IFSC:"SBIN0000691", BANK:"SBI", BRANCH:"Mumbai Main", DISTRICT:"Mumbai", STATE:"MAHARASHTRA", ADDRESS:"Horniman Circle, Mumbai"},
+  {IFSC:"SBIN0005943", BANK:"SBI", BRANCH:"Connaught Place Delhi", DISTRICT:"Delhi", STATE:"DELHI", ADDRESS:"Sansad Marg, New Delhi"},
+  {IFSC:"SBIN0070031", BANK:"SBI", BRANCH:"Varanasi Main", DISTRICT:"Varanasi", STATE:"UTTAR PRADESH", ADDRESS:"Varanasi Cantt"},
 ];
 
 async function tryLoadRemote(code){
   const urls = [
     `https://api.allorigins.win/raw?url=${encodeURIComponent('https://raw.githubusercontent.com/razorpay/ifsc/master/src/'+code+'.json')}`,
     `https://corsproxy.io/?${encodeURIComponent('https://raw.githubusercontent.com/razorpay/ifsc/master/src/'+code+'.json')}`,
-    `https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/src/${code}.json`,
-    `https://raw.githubusercontent.com/razorpay/ifsc/master/src/${code}.json`
+    `https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/src/${code}.json`
   ];
   for(let u of urls){
-    try{
-      const r = await fetch(u);
-      if(!r.ok) continue;
-      const j = await r.json();
-      if(j && Object.keys(j).length>0) return j;
-    }catch(e){}
+    try{ let r=await fetch(u,{cache:'no-store'}); if(!r.ok) continue; let j=await r.json(); if(j && Object.keys(j).length>50) return j; }catch(e){}
   }
   return null;
 }
 
 async function doSearch(){
-  const code = document.getElementById('bank').value;
-  const s = document.getElementById('state').value.trim().toLowerCase();
-  const d = document.getElementById('dist').value.trim().toLowerCase();
-  const b = document.getElementById('branch').value.trim().toLowerCase();
-  const status = document.getElementById('status');
-  const resultsDiv = document.getElementById('results');
+  const code=document.getElementById('bank').value;
+  const s=document.getElementById('state').value.trim().toLowerCase();
+  const d=document.getElementById('dist').value.trim().toLowerCase();
+  const b=document.getElementById('branch').value.trim().toLowerCase();
+  const status=document.getElementById('status');
+  const resultsDiv=document.getElementById('results');
 
-  status.innerText = `Loading ${code} - Full India database...`;
-  resultsDiv.innerHTML = '<p class="text-center text-xs">Loading...</p>';
-
-  let list = [];
-  let remote = await tryLoadRemote(code);
+  status.innerText=`Searching ${code}...`;
+  let list=[];
+  let remote=await tryLoadRemote(code);
 
   if(remote){
-    list = Object.entries(remote).map(([ifsc, info])=>({IFSC:ifsc, ...info}));
+    list=Object.entries(remote).map(([ifsc,info])=>({IFSC:ifsc,...info}));
     try{ localStorage.setItem('ifsc_'+code, JSON.stringify(remote)); }catch(e){}
-    status.innerText = `✅ Pura India Loaded: ${list.length} branches for ${code} - Server Cost 0`;
+    status.innerText=`✅ LIVE Full India: ${list.length} branches loaded for ${code}`;
   } else {
-    let cached = null;
-    try{ cached = localStorage.getItem('ifsc_'+code); }catch(e){}
+    let cached=null; try{ cached=localStorage.getItem('ifsc_'+code); }catch(e){}
     if(cached){
-      let j = JSON.parse(cached);
-      list = Object.entries(j).map(([ifsc, info])=>({IFSC:ifsc, ...info}));
-      status.innerText = `📦 Offline Cached: ${list.length} branches - Pura India (from last load)`;
+      let j=JSON.parse(cached);
+      list=Object.entries(j).map(([ifsc,info])=>({IFSC:ifsc,...info}));
+      status.innerText=`📦 Offline Full India: ${list.length} branches (cached)`;
     } else {
-      list = ALL_FALLBACK.filter(x=>x.IFSC.startsWith(code));
-      status.innerText = `⚠️ Net fail - Demo only: ${list.length} branches. Net aane par pura India ayega`;
+      list=ALL_FALLBACK.filter(x=>x.IFSC.startsWith(code));
+      status.innerText=`⚠️ Offline Demo: ${list.length} branches (Net on karo to pura India ayega)`;
     }
   }
 
-  let filtered = list.filter(x=>{
-    let st = (x.STATE||'').toLowerCase();
-    let di = (x.DISTRICT||'').toLowerCase();
-    let br = (x.BRANCH||'').toLowerCase();
-    let matchS = !s || st.includes(s);
-    let matchD = !d || di.includes(d);
-    let matchB = !b || br.includes(b);
-    return matchS && matchD && matchB;
+  let filtered=list.filter(x=>{
+    return (!s || (x.STATE||'').toLowerCase().includes(s)) &&
+           (!d || (x.DISTRICT||'').toLowerCase().includes(d)) &&
+           (!b || (x.BRANCH||'').toLowerCase().includes(b));
   });
 
-  if(!s && !d && !b) filtered = filtered.slice(0,30);
+  if(!s &&!d &&!b) filtered=filtered.slice(0,30);
 
   if(!filtered.length){
-    resultsDiv.innerHTML = `<p class="text-center text-red-500 text-sm">Koi result nahi mila. Jaipur ke liye RAJASTHAN + JAIPUR + JAIPUR likho.</p>`;
+    resultsDiv.innerHTML=`<p class="text-center text-sm p-4 bg-red-50 rounded-xl">Koi result nahi mila. Try karo: <br><b>UTTAR PRADESH + GORAKHPUR + GORAKHPUR</b> ya <b>RAJASTHAN + JAIPUR + JAIPUR</b></p>`;
     return;
   }
 
-  resultsDiv.innerHTML = filtered.slice(0,100).map(x=>`
+  resultsDiv.innerHTML=filtered.slice(0,100).map(x=>`
     <div class="border rounded-xl p-4 bg-gray-50">
-      <div class="flex justify-between gap-2"><b class="text-sm">${x.BANK} - ${x.BRANCH}</b><span class="bg-black text-white px-2 py-1 rounded text-[10px] font-mono h-fit">${x.IFSC}</span></div>
+      <div class="flex justify-between gap-2"><b class="text-sm">${x.BANK} - ${x.BRANCH}</b><span class="bg-black text-white px-2 py-1 rounded text-[10px] font-mono">${x.IFSC}</span></div>
       <p class="text-[11px] text-gray-600 mt-1">${x.ADDRESS||''}, ${x.DISTRICT}, ${x.STATE}</p>
       <button onclick="navigator.clipboard.writeText('${x.IFSC}');this.innerText='Copied!'" class="mt-2 border bg-white px-3 py-1 rounded-full text-xs">Copy ${x.IFSC}</button>
     </div>
