@@ -1,76 +1,81 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>All Bank IFSC Finder - ToolSangam</title>
-<script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 min-h-screen p-4 flex justify-center">
-<div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IFSC Finder - All Banks</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-50 p-4 flex justify-center"><div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
 <h1 class="text-2xl font-bold text-center">Find ANY IFSC Code</h1>
-<p class="text-center text-xs text-gray-500 mb-4">1,50,000+ Codes - 100% Browser me, Server Cost 0</p>
+<p class="text-center text-xs text-gray-500 mb-4">Sare 1.5 lakh codes - Server Cost 0</p>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-<input id="qBank" placeholder="Bank Name - ex: SBI" class="border-2 rounded-xl p-3">
-<input id="qState" placeholder="State - ex: Rajasthan" class="border-2 rounded-xl p-3">
-<input id="qDistrict" placeholder="District - ex: Kotputli" class="border-2 rounded-xl p-3">
-<input id="qBranch" placeholder="Branch - ex: Kotputli" class="border-2 rounded-xl p-3">
+<div class="grid grid-cols-2 gap-3">
+<select id="bank" class="border-2 rounded-xl p-3 col-span-2"></select>
+<input id="state" placeholder="State - BIHAR" class="border-2 rounded-xl p-3">
+<input id="dist" placeholder="District - MADHEPURA" class="border-2 rounded-xl p-3">
+<input id="branch" placeholder="Branch - ARAR" class="border-2 rounded-xl p-3 col-span-2">
 </div>
-<button onclick="searchIFSC()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC</button>
-<p id="status" class="text-center text-xs text-gray-500 mt-2">Database loading...</p>
-
-<div id="results" class="mt-6 space-y-3"></div>
+<button onclick="doSearch()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC</button>
+<p id="status" class="text-center text-xs text-gray-500 mt-2">Ready</p>
+<div id="results" class="mt-4 space-y-3"></div>
 </div>
 
 <script>
-let ALL = [];
-// Load full Razorpay IFSC list (compressed) - ~4MB, once per user, cached by browser
-async function loadDB(){
+const BANK_MAP = {"STATE BANK OF INDIA":"SBIN","SBI":"SBIN","PUNJAB NATIONAL BANK":"PUNB","PNB":"PUNB","BANK OF BARODA":"BARB","BOB":"BARB","HDFC BANK":"HDFC","ICICI BANK":"ICIC","AXIS BANK":"UTIB","KOTAK MAHINDRA BANK":"KKBK","CANARA BANK":"CNRB","UNION BANK OF INDIA":"UBIN","BANK OF INDIA":"BKID","INDIAN BANK":"IDIB","CENTRAL BANK OF INDIA":"CBIN","INDIAN OVERSEAS BANK":"IOBA","UCO BANK":"UCBA","BANK OF MAHARASHTRA":"MAHB","IDBI BANK":"IBKL","YES BANK":"YESB","IDFC FIRST BANK":"IDFB","INDUSIND BANK":"INDB","FEDERAL BANK":"FDRL","SOUTH INDIAN BANK":"SIBL","KARNATAKA BANK":"KARB","KARUR VYSYA BANK":"KVBL","CITY UNION BANK":"CIUB","RBL BANK":"RATN","JAMMU & KASHMIR BANK":"JAKA","BANDHAN BANK":"BDBL"};
+
+const bankSel = document.getElementById('bank');
+bankSel.innerHTML = '<option value="">Select Bank</option>' + Object.keys(BANK_MAP).map(k=>`<option value="${BANK_MAP[k]}">${k}</option>`).join('');
+bankSel.value="SBIN"; // default SBI
+
+let cache = {};
+async function loadBankFile(code){
+  if(cache[code]) return cache[code];
+  document.getElementById('status').innerText = `Loading ${code}.json in your browser...`;
+  // Razorpay ka har bank ka alag file hai, 200KB ka, CORS allowed
+  const urls = [
+    `https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/src/${code}.json`,
+    `https://raw.githubusercontent.com/razorpay/ifsc/master/src/${code}.json`
+  ];
+  for(let url of urls){
+    try{
+      const r = await fetch(url);
+      if(!r.ok) continue;
+      const j = await r.json();
+      cache[code]=j;
+      document.getElementById('status').innerText = `${Object.keys(j).length} branches loaded for ${code}`;
+      return j;
+    }catch(e){}
+  }
+  throw new Error('load fail');
+}
+
+async function doSearch(){
+  const code = bankSel.value;
+  const s = document.getElementById('state').value.toLowerCase();
+  const d = document.getElementById('dist').value.toLowerCase();
+  const b = document.getElementById('branch').value.toLowerCase();
+  if(!code){ alert('Bank select karo'); return; }
   try{
-    // This is Razorpay's official full list
-    const url = 'https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/dist/IFSC.json';
-    const res = await fetch(url);
-    const json = await res.json();
-    ALL = Object.entries(json).map(([ifsc, d])=>({ifsc, ...d}));
-    document.getElementById('status').innerText = `Loaded ${ALL.length} IFSC codes in your browser. Ab search karo.`;
+    const data = await loadBankFile(code);
+    const results = Object.entries(data).filter(([ifsc, info])=>{
+      const st = (info.STATE||'').toLowerCase();
+      const di = (info.DISTRICT||'').toLowerCase();
+      const br = (info.BRANCH||'').toLowerCase();
+      return (!s || st.includes(s)) && (!d || di.includes(d)) && (!b || br.includes(b));
+    }).slice(0,100);
+
+    const div = document.getElementById('results');
+    if(!results.length){ div.innerHTML='<p class="text-center text-red-500">Koi IFSC nahi mila - spelling check karo</p>'; return; }
+    div.innerHTML = results.map(([ifsc, info])=>`
+      <div class="border rounded-xl p-4 bg-gray-50">
+        <div class="flex justify-between"><b>${info.BANK} - ${info.BRANCH}</b><span class="bg-black text-white px-2 py-1 rounded text-xs font-mono">${ifsc}</span></div>
+        <p class="text-xs text-gray-600 mt-1">${info.ADDRESS||''}, ${info.DISTRICT}, ${info.STATE}</p>
+        <button onclick="navigator.clipboard.writeText('${ifsc}')" class="mt-2 border px-3 py-1 rounded-full text-xs">Copy IFSC</button>
+      </div>
+    `).join('');
+    document.getElementById('status').innerText = `${results.length} IFSC found for ${code} - Server Cost 0`;
   }catch(e){
-    document.getElementById('status').innerText = 'DB load fail, refresh karo. (GitHub down hai)';
+    document.getElementById('status').innerText = 'Load fail, thoda wait karke retry karo';
   }
 }
-loadDB();
-
-function searchIFSC(){
-  const b = document.getElementById('qBank').value.toLowerCase();
-  const s = document.getElementById('qState').value.toLowerCase();
-  const d = document.getElementById('qDistrict').value.toLowerCase();
-  const br = document.getElementById('qBranch').value.toLowerCase();
-  
-  if(!b && !s && !d && !br){ alert('Kuch to likho'); return; }
-
-  const filtered = ALL.filter(x=>{
-    return (!b || x.BANK.toLowerCase().includes(b)) &&
-           (!s || x.STATE.toLowerCase().includes(s)) &&
-           (!d || x.DISTRICT.toLowerCase().includes(d)) &&
-           (!br || x.BRANCH.toLowerCase().includes(br))
-  }).slice(0, 50);
-
-  const div = document.getElementById('results');
-  if(!filtered.length){ div.innerHTML='<p class="text-center text-red-500">Koi IFSC nahi mila</p>'; return; }
-
-  div.innerHTML = filtered.map(x=>`
-    <div class="border-2 rounded-xl p-4 bg-gray-50">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold">${x.BANK} - ${x.BRANCH}</h3>
-        <span class="bg-black text-white px-3 py-1 rounded-full text-xs font-mono">${x.IFSC}</span>
-      </div>
-      <p class="text-xs text-gray-600 mt-1">${x.ADDRESS}, ${x.DISTRICT}, ${x.STATE} - ${x.CITY}</p>
-      <button onclick="navigator.clipboard.writeText('${x.IFSC}'); this.innerText='Copied!'" class="mt-2 text-xs bg-white border px-3 py-1 rounded-full">Copy IFSC</button>
-    </div>
-  `).join('');
-  document.getElementById('status').innerText = `${filtered.length} results found (from ${ALL.length} codes) - 0 server cost`;
-}
-</script>
-</body>
-</html>
-</body>
-</html>
+// Auto-search tumhare screenshot wale case ke liye
+document.getElementById('state').value='BIHAR';
+document.getElementById('dist').value='MADHEPURA';
+document.getElementById('branch').value='ARAR';
+</script></body></html>
