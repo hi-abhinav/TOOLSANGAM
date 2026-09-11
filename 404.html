@@ -1,9 +1,35 @@
+<!DOCTYPE html>
+<html lang="hi"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFSC Code Loading...</title>
+<style>body{font-family:system-ui;max-width:800px;margin:auto;padding:20px;line-height:1.6}h1{font-size:22px}.box{border:1px solid #ddd;padding:15px;border-radius:10px;margin-top:15px}</style>
+</head><body>
+<div id="c">Loading IFSC Details...</div>
 <script>
-let path = location.pathname.replace('/ifsc/','').replace('/','').toUpperCase();
+let path = location.pathname.split('/').filter(p=>p).pop().toUpperCase();
 fetch('/ifsc-data.json').then(r=>r.json()).then(DATA=>{
- if(DATA[path]){
-  document.write(`<h1>${path} - ${DATA[path].BANK} ${DATA[path].BRANCH} IFSC Code</h1><p>IFSC: ${path}, MICR: ${DATA[path].MICR}, Address: ${DATA[path].ADDRESS}, State: ${DATA[path].STATE}</p>`);
-  document.title = `${path} IFSC Code - ${DATA[path].BANK} ${DATA[path].BRANCH}`;
- } else { location.href='/ifsc/' }
+ let v=DATA[path];
+ if(v){
+  document.getElementById('c').innerHTML=`
+  <h1>${path} - ${v.BANK} ${v.BRANCH} IFSC Code</h1>
+  <div class="box">
+  <p><b>IFSC Code:</b> ${path}</p>
+  <p><b>MICR Code:</b> ${v.MICR || 'N/A'}</p>
+  <p><b>Bank:</b> ${v.BANK}</p>
+  <p><b>Branch:</b> ${v.BRANCH}</p>
+  <p><b>Address:</b> ${v.ADDRESS}</p>
+  <p><b>District:</b> ${v.DISTRICT}</p>
+  <p><b>State:</b> ${v.STATE}</p>
+  </div>
+  <p><a href='/ifsc/'>← Back to All Banks</a> | <a href='/ifsc/${path}'>Direct Link: toolsangam.online/ifsc/${path}</a></p>
+  <div style="background:#f6f6f6;padding:15px;margin-top:20px;text-align:center">AdSense Ad Space</div>
+  `;
+  document.title=`${path} - ${v.BANK} ${v.BRANCH} IFSC Code, MICR, Address`;
+ } else {
+  location.href='/ifsc/';
+ }
 });
 </script>
+</body></html>
+</body></html>
