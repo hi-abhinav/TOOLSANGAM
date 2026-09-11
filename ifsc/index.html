@@ -1,42 +1,56 @@
 <!DOCTYPE html>
-<html><head>
-<title>SBI, PNB, HDFC IFSC Code Finder Rajasthan - ToolSangam</title>
-<meta name="description" content="Find IFSC Code by Bank, State, District, Branch. Kotputli, Jaipur, Rajasthan ke sabhi banks ke IFSC, MICR, Address.">
+<html lang="hi"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFSC Finder Rajasthan - SBI, PNB, HDFC Kotputli Jaipur | ToolSangam</title>
+<meta name="description" content="Rajasthan ke sabhi banks ka IFSC Code, MICR, Branch Address nikale. Kotputli, Behror, Jaipur ke SBI, PNB, BOB ke codes.">
 <script type="application/ld+json">
-{
- "@context":"https://schema.org",
- "@type":"FAQPage",
- "mainEntity":[
-  {"@type":"Question","name":"IFSC Code kya hota hai?","acceptedAnswer":{"@type":"Answer","text":"IFSC 11 digit ka code hai jo har bank branch ko RBI deta hai NEFT/RTGS ke liye."}},
-  {"@type":"Question","name":"IFSC se bank kaise pata kare?","acceptedAnswer":{"@type":"Answer","text":"Upar Box 2 me IFSC daale, bank ka naam, branch, MICR, address turant aa jayega."}},
-  {"@type":"Question","name":"Kotputli ka SBI IFSC kya hai?","acceptedAnswer":{"@type":"Answer","text":"Kotputli SBI ke 3 branches hai - Main Branch SBIN0000656, Paota SBIN0031021 etc. Dropdown se select kare."}}
- ]
-}
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IFSC Code kya hota hai?","acceptedAnswer":{"@type":"Answer","text":"11 digit code jo RBI har branch ko deta hai."}},{"@type":"Question","name":"Kotputli SBI IFSC kya hai?","acceptedAnswer":{"@type":"Answer","text":"SBIN0000656 Kotputli main branch ka IFSC hai."}}]}
 </script>
-</head>
-<body>
-<h1>IFSC Finder - Bank se IFSC Nikale</h1>
-<!-- Tab 1 Bank->IFSC -->
-<select id="bank"></select><select id="state"></select><select id="branch"></select>
-<button onclick="findIFSC()">Find IFSC</button>
-<div id="result1"></div>
-<!-- Tab 2 IFSC->Bank -->
-<input id="ifscInput" placeholder="SBIN0000656 daale"><button onclick="findBank()">Find Bank</button>
-<div id="result2"></div>
+<style>body{font-family:system-ui;max-width:800px;margin:auto;padding:20px}select,input{width:100%;padding:12px;margin:8px 0}button{background:#1a73e8;color:#fff;padding:12px;border:none;width:100%}.card{border:1px solid #ddd;padding:15px;margin-top:15px;border-radius:8px}</style>
+</head><body>
+<h1>IFSC Code Finder - Rajasthan</h1>
+<div style="display:flex;gap:10px"><button onclick="showTab(1)">Bank se IFSC</button><button onclick="showTab(2)">IFSC se Bank</button></div>
+
+<div id="tab1" class="card">
+<select id="bankSel"><option>Bank Chune - SBI, PNB...</option></select>
+<select id="districtSel"><option>District - Kotputli, Jaipur...</option></select>
+<select id="branchSel"><option>Branch Chune</option></select>
+<button onclick="findIFSC()">Find IFSC Code</button>
+<div id="r1"></div>
+</div>
+
+<div id="tab2" class="card" style="display:none">
+<input id="ifscInput" placeholder="Ex: SBIN0000656">
+<button onclick="findBank()">Find Bank Details</button>
+<div id="r2"></div>
+</div>
+
+<div id="ads" style="margin:20px 0; background:#f1f1f1; padding:20px; text-align:center">Adsense Ad Yahan Aayega</div>
+
+<h2>FAQ</h2>
+<p><b>Q: Kotputli ka IFSC kaise nikale?</b> Upar bank, district, branch select karo.</p>
 
 <script>
 let DATA={};
-fetch('/ifsc-data.json').then(r=>r.json()).then(j=>{DATA=j; fillBanks()});
-function fillBanks(){/* bank list bharne ka code */}
-function findIFSC(){/* filter karke IFSC dikhana */}
+fetch('/ifsc-data.json').then(r=>r.json()).then(d=>{DATA=d; init()});
+function init(){
+ let banks=new Set(); let dists=new Set();
+ Object.values(DATA).forEach(v=>{banks.add(v.BANK); dists.add(v.DISTRICT)});
+ document.getElementById('bankSel').innerHTML=[...banks].map(b=>`<option>${b}</option>`).join('');
+ document.getElementById('districtSel').innerHTML=[...dists].map(b=>`<option>${b}</option>`).join('');
+}
+function findIFSC(){
+ let b=document.getElementById('bankSel').value; let dis=document.getElementById('districtSel').value;
+ let list=Object.entries(DATA).filter(([k,v])=>v.BANK==b && v.DISTRICT==dis);
+ document.getElementById('r1').innerHTML=list.map(([k,v])=>`<p><a href='/ifsc/${k}'>${k} - ${v.BRANCH}</a></p>`).join('');
+}
 function findBank(){
  let code=document.getElementById('ifscInput').value.toUpperCase();
- document.getElementById('result2').innerHTML = DATA[code]? `<h2>${code} - ${DATA[code].BANK} ${DATA[code].BRANCH}</h2><p>${DATA[code].ADDRESS}</p>` : 'Not Found';
- history.pushState({},'',`/ifsc/${code}`);
+ let v=DATA[code];
+ document.getElementById('r2').innerHTML=v?`<h3>${code} - ${v.BANK} ${v.BRANCH}</h3><p>MICR: ${v.MICR}<br>${v.ADDRESS}<br>${v.DISTRICT}, ${v.STATE}</p>`:'Not Found in Rajasthan';
+ if(v) history.pushState({},'',`/ifsc/${code}`);
 }
+function showTab(n){document.getElementById('tab1').style.display=n==1?'block':'none';document.getElementById('tab2').style.display=n==2?'block':'none';}
 </script>
-<!-- FAQ Section for SEO -->
-<h2>FAQ - IFSC Code</h2>
-<p><b>Q: IFSC Code kya hota hai?</b><br>A: 11 digit code...</p>
-</body></html>
 </body></html>
