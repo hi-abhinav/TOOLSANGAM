@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC Photo & Signature Resizer 20KB - Free for CGL, CHSL, MTS, GD | ToolSangam</title>
+<meta name="description" content="Free SSC Photo Resizer 20KB & Signature Resizer 10KB for CGL, CHSL, MTS, GD. Resize to 100x120 & 140x60 pixels, 20-50KB & 10-20KB. 100% browser-based, private, instant download.">
+<meta name="keywords" content="ssc photo resizer 20kb, ssc signature resizer, 100x120 photo resizer, 140x60 signature resizer, ssc cgl photo resizer">
+<link rel="canonical" href="https://toolsangam.online/ssc-photo-signature-resizer">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}
+body{background:#FFF8F0;color:#111}
+.header{max-width:1100px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px}.logo span{color:#e11d48}
+.badge{border:1px solid #111;border-radius:999px;padding:4px 10px;font-size:12px}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:32px;text-align:center;line-height:1.2}
+.sub{text-align:center;color:#666;margin:8px 0 24px}
+.tabs{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.tab{padding:12px 24px;border-radius:12px;border:2px solid #111;cursor:pointer;font-weight:700;background:#fff}
+.tab.active{background:#111;color:#fff}
+.card{background:#fff;border:2px solid #111;border-radius:20px;padding:20px;box-shadow:6px 6px 0 #111;max-width:700px;margin:0 auto}
+.upload{border:2px dashed #111;border-radius:16px;padding:28px;text-align:center;background:#FFFBEB;cursor:pointer}
+.preview{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.prevBox{flex:1;min-width:200px;background:#F9FAFB;border:1px solid #ddd;border-radius:12px;padding:10px;text-align:center}
+.prevBox img{max-width:100%;max-height:180px;border-radius:8px}
+.controls{margin-top:16px;display:grid;gap:12px}
+select,input[type=range]{width:100%;padding:10px;border:2px solid #111;border-radius:10px}
+.btn{background:#111;color:#fff;padding:14px;border-radius:12px;border:none;font-weight:800;cursor:pointer;width:100%;font-size:16px}
+.specs{background:#E0F2FE;border-radius:12px;padding:12px;font-size:13px;margin-top:12px}
+.seo{max-width:800px;margin:40px auto;line-height:1.8}
+.faq details{border:1px solid #ddd;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff}
+.ad-slot{max-width:700px;margin:20px auto;background:#f1f1f1;border:1px dashed #999;height:90px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+</style>
+</head>
+<body>
+<div class="header"><div class="logo">ToolSangam<span>.online</span></div><div class="badge">100% PRIVATE • NO UPLOAD</div></div>
+<div class="container">
+<h1>SSC Photo & Signature Resizer 20KB</h1>
+<p class="sub">For SSC CGL, CHSL, MTS, GD, CPO – Photo 100x120 px (20-50KB) & Sign 140x60 px (10-20KB)</p>
+<div class="tabs"><button class="tab active" id="tabPhoto" onclick="switchTab('photo')">📷 Photo Resizer</button><button class="tab" id="tabSign" onclick="switchTab('sign')">✍️ Signature Resizer</button></div>
+<div class="ad-slot">TOP AD - Monetag Code Here</div>
+<div class="card">
+<div class="upload" onclick="fileInput.click()"><b>📤 Click to Upload JPG / PNG</b><input type="file" id="fileInput" accept="image/*" hidden></div>
+<div class="preview" id="previewArea" style="display:none">
+<div class="prevBox"><div style="font-size:12px;font-weight:700">ORIGINAL</div><img id="origImg"><div id="origInfo" style="font-size:12px"></div></div>
+<div class="prevBox"><div style="font-size:12px;font-weight:700">SSC READY</div><img id="outImg"><div id="outInfo" style="font-size:12px;color:green;font-weight:700"></div></div>
+</div>
+<div class="controls">
+<select id="examSelect" onchange="updateSpecs()"><option value="cgl">SSC CGL / CHSL (20-50KB / 10-20KB)</option><option value="mts">SSC MTS / GD</option></select>
+<div class="specs" id="specBox"></div>
+<button class="btn" id="downloadBtn" disabled onclick="downloadImage()">⬇️ Download SSC Ready Image</button>
+</div>
+</div>
+
+<div class="seo">
+<h2>How to Resize for SSC?</h2>
+<p>SSC requires Photo <b>100x120 px, 20-50KB</b> and Signature <b>140x60 px, 10-20KB</b> in JPG. This tool uses Canvas API and binary search compression to get perfect KB without server upload.</p>
+<h2>FAQ</h2>
+<div class="faq">
+<details><summary>What is SSC CGL photo size?</summary><p>100x120 pixels, 20KB to 50KB, JPG format, white background.</p></details>
+<details><summary>What is SSC signature size?</summary><p>140x60 pixels, 10KB to 20KB, black/blue ink on white paper.</p></details>
+<details><summary>Is my data safe?</summary><p>Yes, 100% processing in your browser. No upload.</p></details>
+</div>
+</div>
+</div>
+<canvas id="canvas" style="display:none"></canvas>
+<script>
+let mode='photo', origFile=null, outBlob=null;
+const specs={cgl:{pw:100,ph:120,pr:[20,50],sw:140,sh:60,sr:[10,20]},mts:{pw:100,ph:120,pr:[20,50],sw:140,sh:60,sr:[10,20]}};
+function switchTab(m){mode=m; tabPhoto.classList.toggle('active',m=='photo'); tabSign.classList.toggle('active',m=='sign'); updateSpecs(); if(origFile) processImage();}
+function updateSpecs(){const e=specs[examSelect.value]; specBox.innerHTML=mode=='photo'?`Photo: ${e.pw}x${e.ph} px | ${e.pr[0]}-${e.pr[1]} KB`:`Signature: ${e.sw}x${e.sh} px | ${e.sr[0]}-${e.sr[1]} KB`;}
+updateSpecs();
+fileInput.addEventListener('change',e=>{origFile=e.target.files[0]; const url=URL.createObjectURL(origFile); origImg.src=url; origInfo.innerText=(origFile.size/1024).toFixed(1)+'KB'; previewArea.style.display='flex'; processImage();});
+async function processImage(){
+ if(!origFile) return; const e=specs[examSelect.value]; const W=mode=='photo'?e.pw:e.sw; const H=mode=='photo'?e.ph:e.sh; const maxKB=mode=='photo'?e.pr[1]:e.sr[1];
+ const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d'); const img=await createImageBitmap(origFile);
+ canvas.width=W; canvas.height=H; ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+ let s=Math.max(W/img.width, H/img.height); let w=img.width*s, h=img.height*s; ctx.drawImage(img,(W-w)/2,(H-h)/2,w,h);
+ let low=0.1, high=0.95, best=null; for(let i=0;i<7;i++){let q=(low+high)/2; let b=await new Promise(r=>canvas.toBlob(r,'image/jpeg',q)); if(b.size/1024>maxKB) high=q; else{low=q; best=b;}} outBlob=best;
+ outImg.src=URL.createObjectURL(best); outInfo.innerText=`${W}x${H} | ${(best.size/1024).toFixed(1)}KB READY`; downloadBtn.disabled=false;
+}
+function downloadImage(){const a=document.createElement('a'); a.href=URL.createObjectURL(outBlob); a.download=mode=='photo'?`ssc-photo-20kb.jpg`:`ssc-signature-10kb.jpg`; a.click();}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SSC Photo & Signature Resizer 20KB","operatingSystem":"Web","applicationCategory":"UtilitiesApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is SSC CGL photo size?","acceptedAnswer":{"@type":"Answer","text":"100x120 pixels, 20KB to 50KB, JPG format."}},{"@type":"Question","name":"What is SSC signature size?","acceptedAnswer":{"@type":"Answer","text":"140x60 pixels, 10KB to 20KB."}}]}
+</script>
+</body>
+</html>
