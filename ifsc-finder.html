@@ -1,40 +1,56 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IFSC Finder - All Banks</title><script src="https://cdn.tailwindcss.com"></script></head>
+<title>IFSC Finder - Full India</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-gray-50 p-4 flex justify-center"><div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl p-6">
 <h1 class="text-2xl font-bold text-center">Find ANY IFSC Code</h1>
-<p class="text-center text-xs text-gray-500 mb-4">Sare 1.5 lakh - No API fail</p>
+<p class="text-center text-xs text-gray-500 mb-4">1.5 Lakh+ Branches - Full India - Zero Server Cost</p>
 <div class="grid grid-cols-2 gap-3">
-<select id="bank" class="border-2 rounded-xl p-3 col-span-2"><option value="SBIN">STATE BANK OF INDIA</option><option value="PUNB">PUNJAB NATIONAL BANK</option><option value="BARB">BANK OF BARODA</option><option value="HDFC">HDFC BANK</option></select>
-<input id="state" placeholder="BIHAR" value="BIHAR" class="border-2 rounded-xl p-3">
-<input id="dist" placeholder="MADHEPURA" value="MADHEPURA" class="border-2 rounded-xl p-3">
-<input id="branch" placeholder="ARAR" value="ARAR" class="border-2 rounded-xl p-3 col-span-2">
+<select id="bank" class="border-2 rounded-xl p-3 col-span-2">
+<option value="SBIN">STATE BANK OF INDIA</option>
+<option value="PUNB">PUNJAB NATIONAL BANK</option>
+<option value="BARB">BANK OF BARODA</option>
+<option value="HDFC">HDFC BANK</option>
+<option value="ICIC">ICICI BANK</option>
+<option value="UTIB">AXIS BANK</option>
+<option value="KKBK">KOTAK MAHINDRA</option>
+<option value="CNRB">CANARA BANK</option>
+<option value="UBIN">UNION BANK</option>
+</select>
+<input id="state" placeholder="State - RAJASTHAN / BIHAR" class="border-2 rounded-xl p-3">
+<input id="dist" placeholder="District - JAIPUR / MADHEPURA" class="border-2 rounded-xl p-3">
+<input id="branch" placeholder="Branch - JAIPUR / ARAR" class="border-2 rounded-xl p-3 col-span-2">
 </div>
-<button onclick="doSearch()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC</button>
-<p id="status" class="text-center text-xs text-green-600 mt-2">Ready - Offline backup active</p>
+<button onclick="doSearch()" class="w-full mt-4 bg-black text-white py-3 rounded-xl font-bold">Search IFSC - Full India</button>
+<p id="status" class="text-center text-xs text-gray-600 mt-2">Ready - Select bank and search</p>
 <div id="results" class="mt-4 space-y-3"></div>
 </div>
+
 <script>
-const FALLBACK_DATA = [
-  {IFSC:"SBIN0008569", BANK:"STATE BANK OF INDIA", BRANCH:"Bishunpur Arar", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Pogowalpara, Dt, Madhipura, Bihar"},
-  {IFSC:"SBIN0000126", BANK:"STATE BANK OF INDIA", BRANCH:"Madhipura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Dist Madhipura, Bihar 852213"},
-  {IFSC:"SBIN0012642", BANK:"STATE BANK OF INDIA", BRANCH:"Madhepura City", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Drda Office Building, Madhepura"},
-  {IFSC:"SBIN0003052", BANK:"STATE BANK OF INDIA", BRANCH:"Adb Madhipura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Dist Madhipura"},
-  {IFSC:"SBIN0062172", BANK:"STATE BANK OF INDIA", BRANCH:"Cac Madhepura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Ground Floor, Madhepura Main Branch"}
+const ALL_FALLBACK = [
+  {IFSC:"SBIN0000656", BANK:"STATE BANK OF INDIA", BRANCH:"Jaipur Main", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Sanganeri Gate, Jaipur"},
+  {IFSC:"SBIN0016270", BANK:"STATE BANK OF INDIA", BRANCH:"Jawahar Circle, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Gold Souk Grande, Jawahar Circle"},
+  {IFSC:"SBIN0017672", BANK:"STATE BANK OF INDIA", BRANCH:"Sfs, Mansarovar, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"SFS Mansarovar Jaipur"},
+  {IFSC:"SBIN0031552", BANK:"STATE BANK OF INDIA", BRANCH:"International Banking Branch, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"SMS Highway, Jaipur"},
+  {IFSC:"SBIN0004403", BANK:"STATE BANK OF INDIA", BRANCH:"SHF Branch Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Ashok Marg, Jaipur"},
+  {IFSC:"SBIN0016290", BANK:"STATE BANK OF INDIA", BRANCH:"Amber Road, Jaipur", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Amber Road"},
+  {IFSC:"SBIN0008569", BANK:"STATE BANK OF INDIA", BRANCH:"Bishunpur Arar", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Pogowalpara, Madhepura"},
+  {IFSC:"SBIN0000126", BANK:"STATE BANK OF INDIA", BRANCH:"Madhipura", DISTRICT:"Madhepura", STATE:"BIHAR", ADDRESS:"Dist Madhipura"},
+  {IFSC:"SBIN0020016", BANK:"STATE BANK OF INDIA", BRANCH:"Kotputli", DISTRICT:"Jaipur", STATE:"RAJASTHAN", ADDRESS:"Kotputli, Jaipur, Rajasthan"},
 ];
 
-async function loadWithProxy(code){
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://raw.githubusercontent.com/razorpay/ifsc/master/src/${code}.json`)}`,
-    `https://corsproxy.io/?${encodeURIComponent(`https://raw.githubusercontent.com/razorpay/ifsc/master/src/${code}.json`)}`,
-    `https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/src/${code}.json`
+async function tryLoadRemote(code){
+  const urls = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent('https://raw.githubusercontent.com/razorpay/ifsc/master/src/'+code+'.json')}`,
+    `https://corsproxy.io/?${encodeURIComponent('https://raw.githubusercontent.com/razorpay/ifsc/master/src/'+code+'.json')}`,
+    `https://cdn.jsdelivr.net/gh/razorpay/ifsc@master/src/${code}.json`,
+    `https://raw.githubusercontent.com/razorpay/ifsc/master/src/${code}.json`
   ];
-  for(let url of proxies){
+  for(let u of urls){
     try{
-      const r = await fetch(url, {cache:'force-cache'});
+      const r = await fetch(u);
       if(!r.ok) continue;
       const j = await r.json();
-      return j;
+      if(j && Object.keys(j).length>0) return j;
     }catch(e){}
   }
   return null;
@@ -42,44 +58,58 @@ async function loadWithProxy(code){
 
 async function doSearch(){
   const code = document.getElementById('bank').value;
-  const s = document.getElementById('state').value.toLowerCase();
-  const d = document.getElementById('dist').value.toLowerCase();
-  const b = document.getElementById('branch').value.toLowerCase();
+  const s = document.getElementById('state').value.trim().toLowerCase();
+  const d = document.getElementById('dist').value.trim().toLowerCase();
+  const b = document.getElementById('branch').value.trim().toLowerCase();
+  const status = document.getElementById('status');
   const resultsDiv = document.getElementById('results');
 
-  let data = await loadWithProxy(code);
-  let list = [];
+  status.innerText = `Loading ${code} - Full India database...`;
+  resultsDiv.innerHTML = '<p class="text-center text-xs">Loading...</p>';
 
-  if(data){
-    // data is {IFSC: {BRANCH, DISTRICT...}}
-    list = Object.entries(data).map(([ifsc, info])=>({IFSC:ifsc,...info}));
+  let list = [];
+  let remote = await tryLoadRemote(code);
+
+  if(remote){
+    list = Object.entries(remote).map(([ifsc, info])=>({IFSC:ifsc, ...info}));
+    try{ localStorage.setItem('ifsc_'+code, JSON.stringify(remote)); }catch(e){}
+    status.innerText = `✅ Pura India Loaded: ${list.length} branches for ${code} - Server Cost 0`;
   } else {
-    // Net fail to backup use karo
-    document.getElementById('status').innerText = 'Net fail, backup data se dikha raha hu (ye wala 100% chalega)';
-    list = FALLBACK_DATA;
+    let cached = null;
+    try{ cached = localStorage.getItem('ifsc_'+code); }catch(e){}
+    if(cached){
+      let j = JSON.parse(cached);
+      list = Object.entries(j).map(([ifsc, info])=>({IFSC:ifsc, ...info}));
+      status.innerText = `📦 Offline Cached: ${list.length} branches - Pura India (from last load)`;
+    } else {
+      list = ALL_FALLBACK.filter(x=>x.IFSC.startsWith(code));
+      status.innerText = `⚠️ Net fail - Demo only: ${list.length} branches. Net aane par pura India ayega`;
+    }
   }
 
-  const filtered = list.filter(x=>{
-    return (!s || (x.STATE||'').toLowerCase().includes(s)) &&
-           (!d || (x.DISTRICT||'').toLowerCase().includes(d)) &&
-           (!b || (x.BRANCH||'').toLowerCase().includes(b));
-  }).slice(0,50);
+  let filtered = list.filter(x=>{
+    let st = (x.STATE||'').toLowerCase();
+    let di = (x.DISTRICT||'').toLowerCase();
+    let br = (x.BRANCH||'').toLowerCase();
+    let matchS = !s || st.includes(s);
+    let matchD = !d || di.includes(d);
+    let matchB = !b || br.includes(b);
+    return matchS && matchD && matchB;
+  });
+
+  if(!s && !d && !b) filtered = filtered.slice(0,30);
 
   if(!filtered.length){
-    resultsDiv.innerHTML = '<p class="text-center text-red-500">Koi nahi mila, par backup me ye hai:</p>' + FALLBACK_DATA.map(x=>`
-      <div class="border rounded-xl p-4 bg-yellow-50"><b>${x.BANK} - ${x.BRANCH}</b><br><span class="bg-black text-white px-2 py-1 rounded text-xs">${x.IFSC}</span><p class="text-xs">${x.ADDRESS}</p></div>
-    `).join('');
+    resultsDiv.innerHTML = `<p class="text-center text-red-500 text-sm">Koi result nahi mila. Jaipur ke liye RAJASTHAN + JAIPUR + JAIPUR likho.</p>`;
     return;
   }
 
-  resultsDiv.innerHTML = filtered.map(x=>`
+  resultsDiv.innerHTML = filtered.slice(0,100).map(x=>`
     <div class="border rounded-xl p-4 bg-gray-50">
-      <div class="flex justify-between"><b>${x.BANK} - ${x.BRANCH}</b><span class="bg-black text-white px-2 py-1 rounded text-xs font-mono">${x.IFSC}</span></div>
-      <p class="text-xs text-gray-600 mt-1">${x.ADDRESS||''}, ${x.DISTRICT}, ${x.STATE}</p>
-      <button onclick="navigator.clipboard.writeText('${x.IFSC}')" class="mt-2 border px-3 py-1 rounded-full text-xs">Copy ${x.IFSC}</button>
+      <div class="flex justify-between gap-2"><b class="text-sm">${x.BANK} - ${x.BRANCH}</b><span class="bg-black text-white px-2 py-1 rounded text-[10px] font-mono h-fit">${x.IFSC}</span></div>
+      <p class="text-[11px] text-gray-600 mt-1">${x.ADDRESS||''}, ${x.DISTRICT}, ${x.STATE}</p>
+      <button onclick="navigator.clipboard.writeText('${x.IFSC}');this.innerText='Copied!'" class="mt-2 border bg-white px-3 py-1 rounded-full text-xs">Copy ${x.IFSC}</button>
     </div>
   `).join('');
-  document.getElementById('status').innerText = `${filtered.length} found - Server Cost 0`;
 }
-doSearch(); // auto run for your ARAR test
 </script></body></html>
