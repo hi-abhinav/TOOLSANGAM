@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html><head>
+<title>SBI, PNB, HDFC IFSC Code Finder Rajasthan - ToolSangam</title>
+<meta name="description" content="Find IFSC Code by Bank, State, District, Branch. Kotputli, Jaipur, Rajasthan ke sabhi banks ke IFSC, MICR, Address.">
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"FAQPage",
+ "mainEntity":[
+  {"@type":"Question","name":"IFSC Code kya hota hai?","acceptedAnswer":{"@type":"Answer","text":"IFSC 11 digit ka code hai jo har bank branch ko RBI deta hai NEFT/RTGS ke liye."}},
+  {"@type":"Question","name":"IFSC se bank kaise pata kare?","acceptedAnswer":{"@type":"Answer","text":"Upar Box 2 me IFSC daale, bank ka naam, branch, MICR, address turant aa jayega."}},
+  {"@type":"Question","name":"Kotputli ka SBI IFSC kya hai?","acceptedAnswer":{"@type":"Answer","text":"Kotputli SBI ke 3 branches hai - Main Branch SBIN0000656, Paota SBIN0031021 etc. Dropdown se select kare."}}
+ ]
+}
+</script>
+</head>
+<body>
+<h1>IFSC Finder - Bank se IFSC Nikale</h1>
+<!-- Tab 1 Bank->IFSC -->
+<select id="bank"></select><select id="state"></select><select id="branch"></select>
+<button onclick="findIFSC()">Find IFSC</button>
+<div id="result1"></div>
+<!-- Tab 2 IFSC->Bank -->
+<input id="ifscInput" placeholder="SBIN0000656 daale"><button onclick="findBank()">Find Bank</button>
+<div id="result2"></div>
+
+<script>
+let DATA={};
+fetch('/ifsc-data.json').then(r=>r.json()).then(j=>{DATA=j; fillBanks()});
+function fillBanks(){/* bank list bharne ka code */}
+function findIFSC(){/* filter karke IFSC dikhana */}
+function findBank(){
+ let code=document.getElementById('ifscInput').value.toUpperCase();
+ document.getElementById('result2').innerHTML = DATA[code]? `<h2>${code} - ${DATA[code].BANK} ${DATA[code].BRANCH}</h2><p>${DATA[code].ADDRESS}</p>` : 'Not Found';
+ history.pushState({},'',`/ifsc/${code}`);
+}
+</script>
+<!-- FAQ Section for SEO -->
+<h2>FAQ - IFSC Code</h2>
+<p><b>Q: IFSC Code kya hota hai?</b><br>A: 11 digit code...</p>
+</body></html>
+</body></html>
