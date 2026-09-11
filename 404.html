@@ -1,0 +1,9 @@
+<script>
+let path = location.pathname.replace('/ifsc/','').replace('/','').toUpperCase();
+fetch('/ifsc-data.json').then(r=>r.json()).then(DATA=>{
+ if(DATA[path]){
+  document.write(`<h1>${path} - ${DATA[path].BANK} ${DATA[path].BRANCH} IFSC Code</h1><p>IFSC: ${path}, MICR: ${DATA[path].MICR}, Address: ${DATA[path].ADDRESS}, State: ${DATA[path].STATE}</p>`);
+  document.title = `${path} IFSC Code - ${DATA[path].BANK} ${DATA[path].BRANCH}`;
+ } else { location.href='/ifsc/' }
+});
+</script>
