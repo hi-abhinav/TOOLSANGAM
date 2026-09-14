@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF & DOCX to EPUB Converter - ToolSangam</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#0a0f1c;color:#e2e8f0;padding:20px}
+.box{max-width:800px;margin:40px auto;background:#111a2e;border:1px solid #1e293b;border-radius:20px;padding:30px}
+h1{text-align:center;background:linear-gradient(90deg,#00d9ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:32px}
+.drop{border:2px dashed #334155;border-radius:16px;padding:50px;text-align:center;cursor:pointer;margin-top:30px}
+.drop:hover{border-color:#00d9ff;background:rgba(0,217,255,.05)}
+#bar{height:8px;background:linear-gradient(90deg,#00d9ff,#7c3aed);width:0%;border-radius:10px;transition:.3s}
+#progress{height:8px;background:#1e293b;border-radius:10px;margin-top:20px;display:none}
+.btn{width:100%;padding:14px;background:linear-gradient(90deg,#00d9ff,#7c3aed);border:none;border-radius:12px;font-weight:700;font-size:18px;cursor:pointer;margin-top:20px;display:none;color:#000}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>PDF / DOCX to EPUB</h1>
+<p style="text-align:center;color:#94a3b8;margin-top:10px">100% Browser Only - No Upload</p>
+<div class="drop" id="drop">Drag PDF or DOCX here or Click to Browse
+<input type="file" id="file" accept=".pdf,.docx" hidden>
+</div>
+<div id="progress"><div id="bar"></div></div>
+<p id="status" style="text-align:center;margin-top:15px;color:#94a3b8">Ready</p>
+<button class="btn" id="dl">Download EPUB</button>
+</div>
+<script>
+const drop=document.getElementById('drop'), fileInput=document.getElementById('file'), bar=document.getElementById('bar'), prog=document.getElementById('progress'), status=document.getElementById('status'), dl=document.getElementById('dl');
+let epubBlob=null;
+drop.onclick=()=>fileInput.click();
+drop.ondragover=e=>{e.preventDefault();drop.style.borderColor='#00d9ff'};
+drop.ondrop=e=>{e.preventDefault();handle(e.dataTransfer.files[0])};
+fileInput.onchange=()=>handle(fileInput.files[0]);
+async function handle(f){
+ if(!f)return; prog.style.display='block'; status.innerText='Reading...'; bar.style.width='20%';
+ let html='';
+ if(f.name.endsWith('.pdf')){
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf=await pdfjsLib.getDocument(await f.arrayBuffer()).promise; let txt='';
+  for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const c=await p.getTextContent();txt+=c.items.map(x=>x.str).join(' ')+'\n\n';bar.style.width=20+(i/pdf.numPages)*40+'%';}
+  html=txt.split('\n\n').map(p=>`<p>${p}</p>`).join('');
+ }else{
+  const r=await mammoth.convertToHtml({arrayBuffer:await f.arrayBuffer()}); html=r.value;
+ }
+ bar.style.width='70%'; status.innerText='Building EPUB...';
+ const zip=new JSZip(); zip.file("mimetype","application/epub+zip",{compression:"STORE"});
+ zip.folder("META-INF").file("container.xml",`<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>`);
+ const oebps=zip.folder("OEBPS"); oebps.file("style.css","body{font-family:serif;line-height:1.6}");
+ oebps.file("chapter.xhtml",`<?xml version="1.0"?><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" href="style.css"/></head><body><h1>${f.name}</h1>${html}</body></html>`);
+ oebps.file("content.opf",`<?xml version="1.0"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="id"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>${f.name}</dc:title><dc:language>en</dc:language><dc:identifier id="id">urn:uuid:${crypto.randomUUID()}</dc:identifier></metadata><manifest><item id="css" href="style.css" media-type="text/css"/><item id="c" href="chapter.xhtml" media-type="application/xhtml+xml"/></manifest><spine><itemref idref="c"/></spine></package>`);
+ epubBlob=await zip.generateAsync({type:"blob"}); bar.style.width='100%'; status.innerText='Done!'; dl.style.display='block';
+}
+dl.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(epubBlob);a.download='converted.epub';a.click();}
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is it private?","acceptedAnswer":{"@type":"Answer","text":"Yes, 100% browser only."}}]}</script>
+</body>
+</html>
